@@ -1,0 +1,10 @@
+[kevr@bit IntCollection]$ g++ *.cpp -o /tmp/Int
+[kevr@bit IntCollection]$ /tmp/Int 
+a: 34, 64, 72
+b: 34, 64, 72
+(a == b): 1
+c: 92, 81
+(b == c): 0
+c: 34, 64, 72
+(a == c): 1
+[kevr@bit IntCollection]$

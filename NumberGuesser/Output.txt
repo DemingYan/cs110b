@@ -1,0 +1,32 @@
+[kevr@chrome NumberGuesser]$ ./Numb 
+Is 50 your number? (h/l/c): h
+Is 75 your number? (h/l/c): l
+Is 62 your number? (h/l/c): h
+Is 68 your number? (h/l/c): c
+Oh! so your number was 68, cool
+Do you want to play again? (y/n): y
+Is 50 your number? (h/l/c): l
+Is 25 your number? (h/l/c): l
+Is 13 your number? (h/l/c): l
+Is 7 your number? (h/l/c): l
+Is 4 your number? (h/l/c): l
+Is 2 your number? (h/l/c): l
+Is 1 your number? (h/l/c): l
+Your number was not between 1-100, liar
+Do you want to play again? (y/n): y
+Is 50 your number? (h/l/c): h
+Is 75 your number? (h/l/c): l
+Is 62 your number? (h/l/c): h
+Is 68 your number? (h/l/c): l
+Is 65 your number? (h/l/c): h
+Is 66 your number? (h/l/c): h
+Is 67 your number? (h/l/c): h
+Your number was not between 1-100, liar
+Do you want to play again? (y/n): y
+Is 50 your number? (h/l/c): l
+Is 25 your number? (h/l/c): l
+Is 13 your number? (h/l/c): h
+Is 19 your number? (h/l/c): c
+Oh! so your number was 19, cool
+Do you want to play again? (y/n): n
+[kevr@chrome NumberGuesser]$

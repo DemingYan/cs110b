@@ -1,0 +1,21 @@
+1. this->x is necessary to refer to the member variable x, since the
+constructor has a parameter x passed in, this is required to create a
+distinction between the two x variables.
+
+2. this->x and this->y in Circle are referring to x and y of it's base
+class.
+
+3. The keyword "virtual" adds that function to a run-time virtual table
+(vtable) of function pointers, so that you may polymorphically call to a
+function indirectly via a base type pointer. The purpose of "= 0" is to
+create a pure virtual function, which must be implemented by derived
+classes.
+
+4. "Shape(x, y)" in this context is known as a delegating constructor.
+This delegation will call the constructor of the base class for
+initialization purposes. If you remove it, the base classes member
+variables will not be initialized properly.
+
+5. List polymorphic examples
+    GridWriter.cpp, line 102: shapes[i]->containsPoint(x, y)
+

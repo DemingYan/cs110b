@@ -1,0 +1,32 @@
+[kevr@bit dmaLeague]$ g++ main.cpp -o league
+[kevr@bit dmaLeague]$ ./league 
+How many teams will you enter?: 4
+Enter team #1: Padres
+Enter the wins for team #1: 69
+Enter team #2: Giants
+Enter the wins for team #2: -1
+You must input a score >= 0
+Enter the wins for team #2: dude
+You must input a score >= 0
+Enter the wins for team #2: 24
+Enter team #3: Mets
+Enter the wins for team #3: 1
+Enter team #4: Athletes
+Enter the wins for team #4: 9001
+League Standings:
+Athletes: 9001
+Padres: 69
+Giants: 24
+Mets: 1
+[kevr@bit dmaLeague]$ ./league 
+How many teams will you enter?: 3
+Enter team #1: Red Sox
+Enter the wins for team #1: 2
+Enter team #2: New Guys
+Enter the wins for team #2: 69
+Enter team #3: Sad Ones
+Enter the wins for team #3: 43
+League Standings:
+New Guys: 69
+Sad Ones: 43
+Red Sox: 2

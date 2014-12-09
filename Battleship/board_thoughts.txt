@@ -1,0 +1,9 @@
+
+I've not taken any time to think about it at all, except that I would
+print out a grid of the points and keep track of the ships that exist
+inside of the grid.
+
+I thought this assignment would be due at the regular time, sorry for
+the lateness; personal issues have been destroying my life. Probs gonna
+be homeless sometime soon.
+

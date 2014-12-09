@@ -1,0 +1,16 @@
+/* Example output
+
+[kevr@bit Circle]$ /tmp/circle 5 5 5
+Area of Circle(r=5): 78.5398 u^2
+Area of Circle(r=25): 1963.5 u^2
+(51, 25) in Circle(r=25, x=25, y=25): False
+(25, 1) in Circle(r=25, x=25, y=25): True
+[kevr@bit Circle]$ /tmp/circle 25 10 7
+Area of Circle(r=7): 153.938 u^2
+Area of Circle(r=49): 7542.96 u^2
+(675, 100) in Circle(r=49, x=625, y=100): False
+(625, 52) in Circle(r=49, x=625, y=100): True
+[kevr@bit Circle]$
+
+*/
+

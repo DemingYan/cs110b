@@ -1,0 +1,17 @@
+[kevr@bit w1]$ ./started 
+Enter the number of count to display: q
+You must enter a valid integer
+Enter the number of count to display: 36
+************************************
+Would you like to quit? (y/n): n
+Enter the number of count to display: 14
+**************
+Would you like to quit? (y/n): y
+[kevr@bit w1]$ ./started 
+Enter the number of count to display: 32
+********************************
+Would you like to quit? (y/n): a
+You must enter a valid option
+Would you like to quit? (y/n): heh
+You must enter a valid option
+Would you like to quit? (y/n): y
