@@ -6,12 +6,13 @@
 
 #include "AbstractCell.h"
 
+// A function used to pop srand() for the program; needs to be used
+// at least once for RandomCell
 void init_rand();
 
 class RandomCell : public AbstractCell
 {
 public:
-    RandomCell();
     bool isAlive();
     bool willBeAliveInNextGeneration();
     char displayChar();
