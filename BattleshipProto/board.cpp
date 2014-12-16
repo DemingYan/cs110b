@@ -10,156 +10,301 @@ Copyright (C) 2014 Kevin Morris
 #include <iostream>
 using namespace std;
 
-Node::Node(const point& p, direction d, int s, Player *pl)
-    : Ship(p, d, s)
+/* BShip definitions */
+BShip::BShip(const point& p, direction d, int sz, Player *parent)
+    : Ship(p, d, sz)
 {
-    cout << "Node constructor called with ({"
-         << p.getX() << ", " << p.getY() << "}, "
-         << d << ", " << s << ")\n";
+    p_origin = p;
+    p_orientation = d;
+    p_length = sz;
+    p_parent = parent;
+}
 
-    length = s;
-    origin_p = p;
-    orientation = d;
-    player = pl;
+const point& BShip::origin() const
+{
+    return p_origin;
+}
+
+const direction BShip::orientation() const
+{
+    return p_orientation;
+}
+
+const int BShip::size() const
+{
+    return p_length;
+}
+
+const Player* BShip::parent() const
+{
+    return p_parent;
+}
+
+/* Player definitions */
+Player::Player(Player **opponent) : opp(opponent)
+{ }
+
+Player::~Player()
+{
+    vector<BShip*>::iterator it;
+    for(it = ps.begin(); it != ps.end(); ++it)
+        delete *it;
+}
+
+const Player* Player::opponent() const
+{
+    return *opp;
+}
+
+void Player::add(BShip *ship)
+{
+    ps.push_back(ship);
+}
+
+bool Player::collides(BShip *ship)
+{
+    vector<BShip*>::iterator it;
+    for(it = ps.begin(); it != ps.end(); ++it)
+    {
+        if((*it)->collidesWith(*ship))
+            return true;
+    }
+
+    return false;
+}
+
+bool Player::sunk()
+{
+    size_t count = 0;
+    vector<BShip*>::iterator it;
+    for(it = ps.begin(); it != ps.end(); ++it)
+    {
+        if((*it)->isSunk())
+            count += 1;
+    }
+
+    return count == ps.size();
+}
+
+const char* Player::name() const
+{
+    return "Player";
+}
+
+/* CPU definitions */
+CPU::CPU(Player **opponent) : Player(opponent)
+{
+    prevHit = NULL;
+}
+
+const char* CPU::name() const
+{
+    return "CPU";
+}
+
+/* Node definitions */
+Node::Node(const point& p, const string& col, char ch, BShip *ship)
+{
+    isHit = false;
+    bship = ship;
+    this->p = p;
+    cellColor = col;
+    cellChar = ch;
 }
 
 Node::~Node()
 {
-    cout << "Node destructor called\n";
 }
 
-const point&
-Node::origin() const
+const BShip* Node::ship()
 {
-    return origin_p;
+    return bship;
 }
 
-const direction
-Node::dir() const
+const bool Node::hit() const
 {
-    return orientation;
+    return isHit;
 }
 
-const int
-Node::size() const
+bool Node::hit(bool h)
 {
-    return length;
+    isHit = h;
+    return isHit;
 }
 
-Player*
-Node::parent() const
+const point& Node::origin() const
 {
-    return player;
+    return p;
 }
 
-// Player Definitions
-// ship_count default = 2
-Player::Player(int ship_count)
+/* WaterNode definitions */
+WaterNode::WaterNode(const point& p) : Node(p, BLUE, '~', NULL) { }
+
+bool WaterNode::hit(bool h)
 {
-    cout << "Player constructor called with ("
-         << ship_count << ")\n";
+    if(Node::hit())
+        return false;
+
+    cellChar = 'O';
+    return Node::hit(h);
 }
 
-Player::~Player()
+/* PNode definitions */
+PNode::PNode(const point& p, BShip *parent)
+    : Node(p, GREEN, '%', parent)
 {
-    cout << "Player destructor called\n";
 }
 
-void
-Player::add(const Node& node)
+bool PNode::hit(bool h)
 {
-    nodes.push_back(node);
+    if(Node::hit())
+        return false;
+
+    BShip *ship = const_cast<BShip*>(Node::ship());
+    ship->shotFiredAtPoint(origin());
+
+    cellChar = 'X';
+    return Node::hit(h);
 }
 
-bool
-Player::shoot(const point& p)
+CNode::CNode(const point& p, BShip *parent)
+    : Node(p, BLUE, '~', parent)
 {
-    return false;
 }
 
-bool
-Player::sunk()
+bool CNode::hit(bool h)
 {
-    std::size_t count = 0;
+    if(Node::hit())
+        return false;
 
-    std::vector<Node>::iterator it;
-    for(it = nodes.begin(); it != nodes.end(); ++it)
-    {
-        if((*it).isSunk())
-            count += 1;
-    }
+    BShip *ship = const_cast<BShip*>(Node::ship());
+    ship->shotFiredAtPoint(origin());
 
-    return count == nodes.size();
+    cellColor = RED;
+    cellChar = 'X';
+    return Node::hit(h);
 }
 
-// Computer Definitions
-// ship_count default = 2
-Computer::Computer(int ship_count)
+/* Board definitions */
+Board::Board(int x, int y) : width(y), height(y)
 {
-    cout << "Computer constructor called with ("
-         << ship_count << ")\n";
-}
-
-Computer::~Computer()
-{
-    cout << "Computer destructor called\n";
-}
-
-// A matrix of nodes. This will represent our grid of water
-// and ships for Battleship
-Matrix::Matrix(int x, int y)
-    : NestedVector<Node*>(y)
-{
-    cout << "Matrix constructor called with ("
-         << x << ", " << y << ")\n";
-
-    for(int i = 0; i < y; ++i)
-        this->push_back(vector<Node*>(x));
-}
-
-Matrix::~Matrix()
-{
-    cout << "Matrix destructor called\n";
-}
-
-Board::Board() : Matrix(10, 10)
-{
-    /* Game board, 10x10; 100 cells */
-    Player *player = new Player;
-    Computer *cpu = new Computer;
-
-    players[0] = player;
-    players[1] = cpu;
+    setup();
 }
 
 Board::~Board()
 {
     delete cpu;
     delete player;
+
+    for(int i = 0; i < width; ++i)
+    {
+        for(int j = 0; j < height; ++j)
+        {
+            if(table[i][j])
+                delete table[i][j];
+        }
+    }
+
 }
 
-Player*
-Board::playRound()
+void Board::print()
 {
-    return player;
+    for(int x = 0; x < width; ++x)
+    {
+        for(int y = 0; y < height; ++y)
+        {
+            cout << ' ' << table[x][y]->color()
+                 << table[x][y]->cell() << DEF;
+        }
+        cout << endl;
+    }
 }
 
-Player*
-Board::sunk()
+void Board::playerShot()
+{
+    int x, y;
+    cout << player->name() << ", enter a point sep. by spaces: ";
+    cin >> x >> y;
+    
+    point target(x, y);
+    if(table[x][y]->hit())
+    {
+        cout << "That point was already hit, try again\n";
+        return playerShot();
+    }
+
+    table[x][y]->hit(true);
+}
+
+void Board::cpuShot()
+{
+}
+
+Player* Board::sunk()
 {
     for(int i = 0; i < 2; ++i)
-        if(players[i]->sunk())
-            return players[i];
+    {
+        if(p[i]->sunk())
+            return p[i];
+    }
+
     return NULL;
 }
 
-Game::Game()
+void Board::setup()
 {
+    player = new Player(&cpu);
+    cpu = new CPU(&player);
+
+    p[0] = player;
+    p[1] = cpu;
+
+    for(int i = 0; i < 2; ++i)
+    {
+        BShip *ship = newShip(player);
+        player->add(ship);
+        distributeNodes<PNode>(ship);
+    }
+
+    for(int i = 0; i < 2; ++i)
+    {
+        BShip *ship = newShip(cpu);
+        cpu->add(ship);
+        distributeNodes<CNode>(ship);
+    }
+
+    for(int x = 0; x < width; ++x)
+    {
+        for(int y = 0; y < height; ++y)
+        {
+            if(!table[x][y])
+                table[x][y] = new WaterNode(point(x, y));
+        }
+    }
+
 }
 
-Game::~Game()
+BShip* Board::newShip(Player *parent)
 {
+    direction dir = direction(rand() % 2);
+    int shipLen = rand() % (3 + 1) + 2;
+
+    point rp(randomPoint(dir, shipLen));
+    BShip *ship = new BShip(rp, dir, shipLen, parent);
+    while(player->collides(ship) || cpu->collides(ship))
+    {
+        rp = randomPoint(dir, shipLen);
+        delete ship;
+        ship = new BShip(rp, dir, shipLen, parent);
+    }
+
+    return ship;
 }
 
+point Board::randomPoint(direction shipDir, int shipLen)
+{
+    return point(rand() % (width - (shipDir ? 0 : shipLen)),
+                 rand() % (height - (shipDir ? shipLen : 0)));
+}
 
 

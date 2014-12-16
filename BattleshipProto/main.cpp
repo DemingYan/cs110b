@@ -81,7 +81,19 @@ int main() {
 	testCopyAssignmentAndConstructor();
 	testThreeArgConstructorAndContainsPoint();
 
-    Matrix matrix(10, 10);
+    srand(time(NULL));
+
+    Board game(10, 10);
+    Player *loser = NULL;
+
+    while(!(loser = game.sunk()))
+    {
+        game.print();
+        game.playerShot();
+    }
+
+
+    cout << "Congrats, " << loser->opponent()->name() << "! You won.\n";
 
     return 0;
 }
