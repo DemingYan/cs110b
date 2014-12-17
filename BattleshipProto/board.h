@@ -64,9 +64,11 @@ public:
 
     const Player* opponent() const;
     void add(BShip *ship);
+    bool contains(const point& p);
     bool collides(BShip *ship);
     bool sunk();
 
+    virtual point shoot(int, int);
     virtual const char* name() const;
 };
 
@@ -80,6 +82,9 @@ private:
 public:
     CPU(Player **opponent);
     const char* name() const;
+
+    point shoot(int, int);
+    Node *& last() { return prevHit; }
 };
 
 class Node

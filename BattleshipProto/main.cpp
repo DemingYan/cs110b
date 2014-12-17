@@ -1,4 +1,6 @@
-
+// Author: Kevin Morris
+// Battleship - Sorry for the lack of logic and robustness,
+// procrastinated :P
 #include "point_collection.h"
 #include "ship.h"
 #include "board.h"
@@ -83,6 +85,8 @@ int main() {
 
     srand(time(NULL));
 
+    cout << "Welcome to Battleship, have fun!\n\n";
+
     Board game(10, 10);
     Player *loser = NULL;
 
@@ -90,8 +94,8 @@ int main() {
     {
         game.print();
         game.playerShot();
+        game.cpuShot();
     }
-
 
     cout << "Congrats, " << loser->opponent()->name() << "! You won.\n";
 

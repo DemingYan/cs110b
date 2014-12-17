@@ -61,6 +61,17 @@ void Player::add(BShip *ship)
     ps.push_back(ship);
 }
 
+bool Player::contains(const point& p)
+{
+    vector<BShip*>::iterator it;
+    for(it = ps.begin(); it != ps.end(); ++it)
+    {
+        if((*it)->containsPoint(p))
+            return true;
+    }
+    return false;
+}
+
 bool Player::collides(BShip *ship)
 {
     vector<BShip*>::iterator it;
@@ -86,6 +97,11 @@ bool Player::sunk()
     return count == ps.size();
 }
 
+point Player::shoot(int w, int l)
+{
+    return point(w, l);
+}
+
 const char* Player::name() const
 {
     return "Player";
@@ -100,6 +116,17 @@ CPU::CPU(Player **opponent) : Player(opponent)
 const char* CPU::name() const
 {
     return "CPU";
+}
+
+// Stubbed up function ready to implement
+point CPU::shoot(int w, int h)
+{
+    point p(rand() % w, rand() % h);
+
+    while(contains(p))
+        p = point(rand() % w, rand() % h);
+
+    return p;
 }
 
 /* Node definitions */
@@ -226,18 +253,30 @@ void Board::playerShot()
     cout << player->name() << ", enter a point sep. by spaces: ";
     cin >> x >> y;
     
-    point target(x, y);
-    if(table[x][y]->hit())
+    if(table[y][x]->hit())
     {
         cout << "That point was already hit, try again\n";
         return playerShot();
     }
 
-    table[x][y]->hit(true);
+    table[y][x]->hit(true);
+
+    cout << player->name() << " shot at (" << x << ", "
+         << y << ")!\n";
+
 }
 
 void Board::cpuShot()
 {
+    point p = cpu->shoot(width, height);
+
+    while(table[p.getY()][p.getX()]->hit())
+        p = cpu->shoot(width, height);
+
+    table[p.getY()][p.getX()]->hit(true);
+
+    cout << cpu->name() << " shot at (" << p.getX() << ", "
+         << p.getY() << ")!\n";
 }
 
 Player* Board::sunk()
@@ -264,6 +303,11 @@ void Board::setup()
         BShip *ship = newShip(player);
         player->add(ship);
         distributeNodes<PNode>(ship);
+
+        cout << player->name() << ", you have been given a ship"
+             << " with length " << ship->size() << " at ("
+             << ship->origin().getX() << ", " << ship->origin().getY()
+             << ")\n";
     }
 
     for(int i = 0; i < 2; ++i)
@@ -273,6 +317,8 @@ void Board::setup()
         distributeNodes<CNode>(ship);
     }
 
+    cout << cpu->name() << " has been given two ships in the water!\n";
+
     for(int x = 0; x < width; ++x)
     {
         for(int y = 0; y < height; ++y)
@@ -281,6 +327,8 @@ void Board::setup()
                 table[x][y] = new WaterNode(point(x, y));
         }
     }
+
+    cout << "Good luck!!\n\n";
 
 }
 
